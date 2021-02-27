@@ -140,7 +140,7 @@ Difficulty: Very Hard
 	telegraph()
 	if(health < maxHealth/3)
 		return double_spiral()
-	visible_message("<span class='colossus'>\"<b>Judgement.</b>\"</span>")
+	visible_message("<span class='colossus'>\"<b>Judgment.</b>\"</span>")
 	return spiral_shoot()
 
 /mob/living/simple_animal/hostile/megafauna/colossus/proc/double_spiral()
@@ -258,7 +258,6 @@ Difficulty: Very Hard
 		target.ex_act(EXPLODE_HEAVY)
 
 
-
 //Black Box
 
 /obj/machinery/smartfridge/black_box
@@ -321,7 +320,7 @@ Difficulty: Very Hard
 		var/json_file = file("data/npc_saves/Blackbox.json")
 		if(!fexists(json_file))
 			return
-		var/list/json = json_decode(file2text(json_file))
+		var/list/json = json_decode(rustg_file_read(json_file))
 		stored_items = json["data"]
 	if(isnull(stored_items))
 		stored_items = list()
@@ -664,8 +663,8 @@ Difficulty: Very Hard
 
 /mob/living/simple_animal/hostile/lightgeist/Initialize()
 	. = ..()
-	verbs -= /mob/living/verb/pulled
-	verbs -= /mob/verb/me_verb
+	remove_verb(/mob/living/verb/pulled)
+	remove_verb(/mob/verb/me_verb)
 	var/datum/atom_hud/medsensor = GLOB.huds[DATA_HUD_MEDICAL_ADVANCED]
 	medsensor.add_hud_to(src)
 
@@ -682,6 +681,8 @@ Difficulty: Very Hard
 	if(.)
 		death()
 
+/mob/living/simple_animal/hostile/lightgeist/slime
+	name = "crystalline lightgeist"
 
 /obj/machinery/anomalous_crystal/refresher //Deletes and recreates a copy of the item, "refreshing" it.
 	observer_desc = "This crystal \"refreshes\" items that it affects, rendering them as new."
@@ -713,7 +714,7 @@ Difficulty: Very Hard
 	if(..())
 		if(ishuman(user))
 			var/mobcheck = FALSE
-			for(var/mob/living/simple_animal/A in range(1, src))
+			for(var/mob/living/simple_animal/A in viewers(1, src))
 				if(A.melee_damage > 5 || A.mob_size >= MOB_SIZE_LARGE || A.ckey || A.stat)
 					break
 				var/obj/structure/closet/stasis/S = new /obj/structure/closet/stasis(A)
@@ -754,7 +755,7 @@ Difficulty: Very Hard
 		L.mind.transfer_to(holder_animal)
 		var/obj/effect/proc_holder/spell/targeted/exit_possession/P = new /obj/effect/proc_holder/spell/targeted/exit_possession
 		holder_animal.mind.AddSpell(P)
-		holder_animal.verbs -= /mob/living/verb/pulled
+		holder_animal.remove_verb(/mob/living/verb/pulled)
 
 /obj/structure/closet/stasis/dump_contents(var/kill = 1)
 	STOP_PROCESSING(SSobj, src)
